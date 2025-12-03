@@ -17,6 +17,10 @@ body {
   font-variant: small-caps;
 }
 
+.vibespace {
+  font-variant: small-caps;
+}
+
 
 .teaser .hero-body {
   padding-top: 0;
@@ -123,10 +127,17 @@ body {
   font-size: 0;
 }
 
+.results-carousel .item img {
+  width: 100%;
+  height: auto;
+  display: block;
+  border-radius: 10px;
+  object-fit: contain;
+}
+
 .results-carousel video {
   margin: 0;
 }
-
 
 .interpolation-panel {
   background: #f5f5f5;
@@ -139,10 +150,6 @@ body {
 }
 
 .interpolation-video-column {
-}
-
-.interpolation-panel .slider {
-  margin: 0 !important;
 }
 
 .interpolation-panel .slider {
