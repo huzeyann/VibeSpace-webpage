@@ -4,12 +4,7 @@ This is the repository that contains source code for the Vibe Space research pap
 
 If you find Vibe Space useful for your work please cite:
 ```
-@article{vibespace2026,
-  title     = {Vibe Spaces for Creatively Connecting and Expressing Visual Concepts},
-  author    = {Anonymous},
-  journal   = {CVPR},
-  year      = {2026},
-}
+todo: submit to arxiv
 ```
 
 # Website License
