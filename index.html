@@ -68,6 +68,12 @@
             </span>
           </div>
 
+          <div class="is-size-5 publication-authors">
+            <span class="author-block"><sup>1</sup>UPenn</span>
+            <span class="author-block"><sup>2</sup>CUNY</span>
+            <span class="author-block"><sup>3</sup>UC Berkeley</span>
+          </div>
+
           <!-- <div class="is-size-5 publication-authors">
             <span class="author-block">CVPR 2026</span>
           </div> -->
@@ -132,12 +138,16 @@
         </h2>
 
         <div class="content has-text-justified" style="margin-top: 2rem; padding: 0 2rem;">
+          <p style="margin-bottom: 1rem;">
+            Consider blending a musician playing a violin with one playing a guitar. Different approaches identify different relevant attributes:
+          </p>
+          <ul style="margin-left: 2rem; margin-bottom: 1rem; list-style-type: disc;">
+            <li><strong>LLMs (Gemini, GPT)</strong> might focus on object parts or style transfer</li>
+            <li><strong>Musicians</strong> would attend to the instrument and how it is played</li>
+          </ul>
           <p>
-          Imagine blending a musician playing a violin with one playing a guitar. What are the most relevant attributes for blending? 
-          Large language models (LLMs) like Gemini or GPT might focus on object parts or style transfer, whereas a musician would attend 
-          to the instrument and how it is played. The intuitive process of identifying and fusing meaningful attributes—the <strong>"vibe"</strong>—reveals 
-          creative connections between distinct concepts.
-        </p>
+            The intuitive process of identifying and fusing meaningful attributes—the <strong>"vibe"</strong>—reveals creative connections between distinct concepts.
+          </p>
         </div>
       </div>
     </div>
@@ -208,11 +218,14 @@
       <div class="column is-full-width">
         <h2 class="title is-3">Vibe Blending Baseline Comparison</h2>
         <div class="content has-text-justified" style="margin-top: 2rem; padding: 0 2rem;">
-          <p>
-            Our method creatively blends the relevant visual attributes that are similar between the inputs, or "vibe". 
-            For example, the vibe between the map and chicken is the shape, not color or texture. In contrast, the baselines 
-            (CLIP Avg, Gemini, GPT) often fail to recognize the key attributes or fuse them effectively.
+          <p style="margin-bottom: 1rem;">
+            Our method identifies and blends the relevant visual attributes—the <strong>"vibe"</strong>—that connect distinct concepts.
           </p>
+          <p style="margin-bottom: 0.5rem;"><strong>Example:</strong> When blending a map and a chicken:</p>
+          <ul style="margin-left: 2rem; margin-bottom: 1rem; list-style-type: disc;">
+            <li><strong>Our method</strong> recognizes that the shared "vibe" is <strong>shape</strong> (not color or texture)</li>
+            <li><strong>Baselines</strong> (CLIP Avg, Gemini, GPT) often fail to identify key attributes or fuse them effectively</li>
+          </ul>
         </div>
         <img src="./static/images/figures/blending_qualitative.png" alt="Blending qualitative results" style="width: 100%; margin: 1rem 0; border-radius: 10px;">
       </div>
@@ -225,6 +238,10 @@
           <div class="columns is-centered">
             <div class="column is-four-fifths">
               <h3 class="title is-4">More Baseline Results</h3>
+              <ul style="margin-left: 2rem; margin-bottom: 1rem; list-style-type: disc;">
+                <li><strong>AID</strong> fails to identify key attributes or fuse them effectively</li>
+                <li><strong>DiffMorpher</strong> fails to produce coherent blends, producing blurry images</li>
+              </ul>
               <!-- <p>
                 Our method generates coherent blends that focus on the most relevant attributes shared by the input images.
               </p> -->
@@ -297,7 +314,7 @@
         <h2 class="title is-2">Vibe Space Method</h2>
         
         <div class="content has-text-justified">
-          <p>
+          <p style="margin-bottom: 1rem;">
             The path of creatively blending the "vibe" is rarely linear. When two concepts lie far apart in latent space, 
             naive linear interpolation produces incoherent images that lack semantic integrity. We propose <strong>Vibe Space</strong> 
             to discover and traverse non-linear paths connecting distant visual concepts in pretrained feature spaces like CLIP.
@@ -308,25 +325,38 @@
             Your browser does not support the video tag.
           </video>
           
-          <p>
-            Our key insight is to reframe the problem: instead of navigating the full ambient feature space, we learn a compact, 
-            low-dimensional manifold—a "small world"—from a few context images that captures the relevant geometry. The forward mapping 
-            involves <strong>(a.)</strong> computing the affinity graph <strong>W</strong> of points on the manifold and 
-            <strong>(b.)</strong> generalized eigenvectors <strong>Ψ(x)</strong> of the graph Laplacian <strong>L</strong> as manifold coordinates. 
-            <strong>(c.)</strong> The inverse mapping performs linear interpolation in the manifold space and uses graph diffusion inversion 
-            to obtain the corresponding path in the original feature space.
+          <p style="margin-top: 1.5rem; margin-bottom: 0.5rem;">
+            <strong>Key Insight:</strong> Instead of navigating the full ambient feature space, we learn a compact, 
+            low-dimensional manifold—a "small world"—from a few context images that captures the relevant geometry.
           </p>
+          
+          <p style="margin-bottom: 0.5rem;"><strong>Forward Mapping:</strong></p>
+          <ul style="margin-left: 2rem; margin-bottom: 1rem; list-style-type: disc;">
+            <li><strong>(a.)</strong> Compute the affinity graph <strong>W</strong> of points on the manifold</li>
+            <li><strong>(b.)</strong> Compute generalized eigenvectors <strong>Ψ(x)</strong> of the graph Laplacian <strong>L</strong> as manifold coordinates</li>
+          </ul>
+          
+          <p style="margin-bottom: 0.5rem;"><strong>Inverse Mapping:</strong></p>
+          <ul style="margin-left: 2rem; margin-bottom: 1.5rem; list-style-type: disc;">
+            <li><strong>(c.)</strong> Perform linear interpolation in the manifold space and use graph diffusion inversion 
+            to obtain the corresponding path in the original feature space</li>
+          </ul>
           
           <img src="./static/images/methods2.png" alt="Vibe Space Method" style="width: 100%; margin: 1rem 0; border-radius: 10px;">
           
-          <p>
-            <strong>(d.)</strong> On real images, we extract patch tokens from DINO features as graph nodes and compute token-wise affinity <strong>W</strong>. 
-            <strong>(e.)</strong> The top <em>m</em> graph eigenvectors produce co-salient segments across two images for blending, and manifold coordinates 
-            for expressing "vibe" features. <strong>(f.)</strong> Similar to the point cloud example, we apply graph diffusion inversion to obtain a path 
-            in CLIP space. We "render" pixel images from CLIP features using a frozen IP-Adapter. We train two lightweight MLP networks 
-            in under 30 seconds: an encoder to simulate and compress the forward mapping, and a decoder to mimic the inverse mapping. 
-            This ensures that Euclidean distances and linear paths in Vibe Space correspond to geodesic distances and semantic paths 
-            on the underlying manifold.
+          <p style="margin-top: 1.5rem; margin-bottom: 0.5rem;"><strong>Application to Real Images:</strong></p>
+          <ul style="margin-left: 2rem; margin-bottom: 1rem; list-style-type: disc;">
+            <li><strong>(d.)</strong> Extract patch tokens from DINO features as graph nodes and compute token-wise affinity <strong>W</strong></li>
+            <li><strong>(e.)</strong> The top <em>m</em> graph eigenvectors produce co-salient segments across two images for blending, 
+            and manifold coordinates for expressing "vibe" features</li>
+            <li><strong>(f.)</strong> Apply graph diffusion inversion to obtain a path in CLIP space, then "render" pixel images 
+            from CLIP features using a frozen IP-Adapter</li>
+          </ul>
+          
+          <p style="margin-bottom: 1rem;">
+            We train two lightweight MLP networks in under 30 seconds: an encoder to simulate and compress the forward mapping, 
+            and a decoder to mimic the inverse mapping. This ensures that Euclidean distances and linear paths in Vibe Space 
+            correspond to geodesic distances and semantic paths on the underlying manifold.
           </p>
         </div>
 
@@ -340,65 +370,82 @@
     <!-- 3. More Results -->
     <div class="columns is-centered">
       <div class="column is-full-width">
-        <h2 class="title is-2">More Vibe Space Results</h2>
+        <h2 class="title is-2">Vibe Space Capabilities</h2>
+        
+        <div class="content has-text-justified" style="margin-top: 1rem; margin-bottom: 2rem;">
+          <p>
+            Vibe Space enables a range of creative applications beyond simple interpolation. Below we demonstrate key capabilities 
+            that showcase the flexibility and power of discovering semantic manifolds between visual concepts.
+          </p>
+        </div>
 
         <!-- Vibe Analogy -->
-        <div class="content has-text-justified">
-          <h3 class="title is-4">Vibe Analogy</h3>
-          <p>
-            With the discovered vibe, we can extrapolate to nontrivial but related concepts, enabling creative analogies that go beyond 
-            simple interpolation. For example, we can morph Leonardo DiCaprio’s face into a playing card.
-          </p>
-          <img src="./static/images/figures/figure3.jpg" alt="Vibe Analogy examples" style="width: 100%; margin: 1rem 0; border-radius: 10px;">
-          <img src="./static/images/figures/more_analogies.png" alt="Vibe Analogy examples" style="width: 80%; margin: 1rem auto; border-radius: 10px; display: block;">
+        <div class="box" style="margin-top: 2rem; border: 1px solid #e8e8e8; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+          <div class="content has-text-justified">
+            <h3 class="title is-4">Vibe Analogy</h3>
+            <p>
+              With the discovered vibe, we can extrapolate to nontrivial but related concepts, enabling creative analogies that go beyond 
+              simple interpolation. For example, we can morph Leonardo DiCaprio's face into a playing card.
+            </p>
+            <img src="./static/images/figures/figure3.jpg" alt="Vibe Analogy examples" style="width: 100%; margin: 1rem 0; border-radius: 10px;">
+            <img src="./static/images/figures/more_analogies.png" alt="Vibe Analogy examples" style="width: 80%; margin: 1rem auto; border-radius: 10px; display: block;">
+          </div>
         </div>
 
         <!-- Negative Vibe -->
-        <div class="content has-text-justified">
-          <h3 class="title is-4">Negative Vibe Control</h3>
-          <p>
-            Vibe attributes are implicitly extracted by Vibe Space. The blending pair defines desired vibes, while negative pairs define 
-            vibes to suppress. By subtracting the negative vibe, we can control which attributes are blended.
-          </p>
-          <img src="./static/images/figures/neg_vibe.png" alt="Negative vibe control" style="width: 100%; margin: 1rem 0; border-radius: 10px;">
-          <p>
-            The blending pair defines desired vibes (rotation + style). The negative pair defines vibes to suppress (style). 
-            Blending without negative examples transfers both attributes. Subtracting the negative vibe, only rotation is blended.
-          </p>
-          <img src="./static/images/figures/neg_vibes_extended.png" alt="Negative vibe control" style="width: 100%; margin: 1rem 0; border-radius: 10px;">
+        <div class="box" style="margin-top: 2rem; border: 1px solid #e8e8e8; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+          <div class="content has-text-justified">
+            <h3 class="title is-4">Negative Vibe Control</h3>
+            <p>
+              Vibe attributes are implicitly extracted by Vibe Space. The blending pair defines desired vibes, while negative pairs define 
+              vibes to suppress. By subtracting the negative vibe, we can control which attributes are blended.
+            </p>
+            <img src="./static/images/figures/neg_vibe.png" alt="Negative vibe control" style="width: 100%; margin: 1rem 0; border-radius: 10px;">
+            <p>
+              The blending pair defines desired vibes (rotation + style). The negative pair defines vibes to suppress (style). 
+              Blending without negative examples transfers both attributes. Subtracting the negative vibe, only rotation is blended.
+            </p>
+            <img src="./static/images/figures/neg_vibes_extended.png" alt="Negative vibe control" style="width: 100%; margin: 1rem 0; border-radius: 10px;">
+          </div>
         </div>
 
         <!-- Extrapolation -->
-        <div class="content has-text-justified">
-          <h3 class="title is-4">Extrapolation</h3>
-          <p>
-            Vibe Space can extrapolate beyond the input images to generate related concepts. By extending the vibe path, 
-            we can create novel visual concepts that maintain semantic coherence.
-          </p>
-          <img src="./static/images/figures/extrapolate.png" alt="Extrapolation examples" style="width: 80%; margin: 1rem auto; border-radius: 10px; display: block;">
+        <div class="box" style="margin-top: 2rem; border: 1px solid #e8e8e8; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+          <div class="content has-text-justified">
+            <h3 class="title is-4">Extrapolation</h3>
+            <p>
+              Vibe Space can extrapolate beyond the input images to generate related concepts. By extending the vibe path, 
+              we can create novel visual concepts that maintain semantic coherence.
+            </p>
+            <img src="./static/images/figures/extrapolate.png" alt="Extrapolation examples" style="width: 80%; margin: 1rem auto; border-radius: 10px; display: block;">
+          </div>
         </div>
 
         <!-- Training with Extra Images -->
-        <div class="content has-text-justified">
-          <h3 class="title is-4">Training with Extra Images</h3>
-          <p>
-            Although two images suffice to train the Vibe Space and identify the dominant attributes, adding related exemplars can enhance 
-            the dominant attributes and suppress spurious ones. This allows for more robust blending when dealing with complex scenes or 
-            when certain attributes need to be emphasized.
-          </p>
-          <img src="./static/images/figures_appendix/interpolation_extra_images.png" alt="Training with extra images" style="width: 80%; margin: 1rem auto; border-radius: 10px; display: block;">
-          <p>
-            In this example, adding extra images helps the model to learn the dominant attributes (glass texture vs sand texture) and suppress spurious ones (triangle vs round shape). So that the blend can create a pyramid with glass texture.
-          </p>
+        <div class="box" style="margin-top: 2rem; border: 1px solid #e8e8e8; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+          <div class="content has-text-justified">
+            <h3 class="title is-4">Training with Extra Images</h3>
+            <p>
+              Although two images suffice to train the Vibe Space and identify the dominant attributes, adding related exemplars can enhance 
+              the dominant attributes and suppress spurious ones. This allows for more robust blending when dealing with complex scenes or 
+              when certain attributes need to be emphasized.
+            </p>
+            <img src="./static/images/figures_appendix/interpolation_extra_images.png" alt="Training with extra images" style="width: 80%; margin: 1rem auto; border-radius: 10px; display: block;">
+            <p>
+              In this example, adding extra images helps the model to learn the dominant attributes (glass texture vs sand texture) and suppress spurious ones (triangle vs round shape). So that the blend can create a pyramid with glass texture.
+            </p>
+          </div>
         </div>
 
         <!-- N-image Blending -->
-        <div class="content has-text-justified">
-          <h3 class="title is-4">N-Image Blending</h3>
-          <p>
-            Vibe Space can blend multiple images simultaneously, discovering shared attributes across multiple concepts.
-          </p>
-          <img src="./static/images/figures/dog_ram_horse.png" alt="N-image blending" style="width: 95%; margin: 1rem auto; border-radius: 10px; display: block;">
+        <div class="box" style="margin-top: 2rem; border: 1px solid #e8e8e8; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+          <div class="content has-text-justified">
+            <h3 class="title is-4">N-Image Blending</h3>
+            <p>
+              Vibe Space can blend multiple images simultaneously, discovering shared attributes across multiple concepts.
+            </p>
+            <img src="./static/images/figures/dog_ram_horse.png" alt="N-image blending" style="width: 95%; margin: 1rem auto; border-radius: 10px; display: block;">
+          </div>
         </div>
       </div>
     </div>
@@ -431,7 +478,7 @@
           <p>
             To gauge human perceptions of creativity, we ask raters to compare different image pairs along two related but distinct axes:
           </p>
-          <ul style="padding-left: 2rem;">
+          <ul style="padding-left: 2rem; list-style-type: disc;">
             <li><strong>Creative Potential:</strong> How much the content of the image pair allows for an interesting or compelling blend.</li>
             <li><strong>Blend Difficulty:</strong> How challenging it would be to create a coherent hybrid that fuses the shared attributes.</li>
           </ul>
@@ -445,13 +492,19 @@
 
         <div class="content has-text-justified">
           <h3 class="title is-4">How to estimate blend difficulty?</h3>
-          <p>
+          <p style="margin-bottom: 1rem;">
             We hypothesize that blending conceptually distant pairs involves traversing longer, curved paths in pretrained feature spaces, compared to blending nearby pairs.
-            To estimate the difficulty of blending two images, we define a path nonlinearity score (PNS) for each image pair based on how much a path decoded from Vibe Space deviates from linear interpolation in CLIP space. Specifically, we quantify excess path length and directional changes.
-            This PNS metric serves as a computational proxy for conceptual distance: higher PNS means the path traverses multiple intermediate regions of feature space.
+          </p>
+          <p style="margin-bottom: 0.5rem;">To estimate the difficulty of blending two images, we define a <strong>Path Nonlinearity Score (PNS)</strong>:</p>
+          <ul style="margin-left: 2rem; margin-bottom: 1rem; list-style-type: disc;">
+            <li>PNS measures how much a path decoded from Vibe Space deviates from linear interpolation in CLIP space</li>
+            <li>Specifically, we quantify <strong>excess path length</strong> and <strong>directional changes</strong></li>
+            <li>Higher PNS indicates the path traverses multiple intermediate regions of feature space</li>
+          </ul>
+          <p>
+            This PNS metric serves as a computational proxy for conceptual distance: higher PNS means greater blend difficulty.
           </p>
           <img src="./static/images/figures/pns_with_plot.png" alt="PNS curve" style="width: 100%; margin: 1rem 0; border-radius: 10px;">
-          </p>
         </div>
 
       </div>
@@ -463,46 +516,58 @@
       <div class="column is-full-width">
         <h2 class="title is-2">Failure Cases</h2>
         
-        <div class="content has-text-justified">
-          <h3 class="title is-4">Failure Case: Entangled Vibes</h3>
-          <p>
-            A limitation of negative vibe blending arises when desired and undesired attributes are entangled within the feature space. 
-            The orthogonalization process assumes that the positive and negative vibes can be separated into distinct, albeit non-orthogonal, 
-            subspaces. When attributes are entangled, it becomes difficult to filter out the unwanted vibe.
-          </p>
-          <img src="./static/images/figures/neg_vibe_fail.png" alt="Negative vibe failure" style="width: 100%; margin: 1rem 0; border-radius: 10px;">
-          <p class="is-size-7 has-text-grey" style="margin-top: 0.5rem;">
-            The positive inputs capture both a style change based on the types of car and a color change. The negative inputs intend to 
-            capture only color change. However, the attributes of style and color are entangled, making them difficult to separate with negative examples.
-          </p>
+        <div class="box" style="margin-top: 2rem; border: 1px solid #e8e8e8; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+          <div class="content has-text-justified">
+            <h3 class="title is-4">Entangled Vibes</h3>
+            <p style="margin-bottom: 1rem;">
+              Negative vibe blending fails when desired and undesired attributes are entangled in feature space. 
+              The method assumes vibes can be separated into distinct subspaces, but entangled attributes cannot be cleanly filtered.
+            </p>
+            <img src="./static/images/figures/neg_vibe_fail.png" alt="Negative vibe failure" style="width: 100%; margin: 1rem 0; border-radius: 10px;">
+            <p class="is-size-7 has-text-grey" style="margin-top: 0.5rem;">
+              Example: Positive inputs capture both style (car type) and color changes. Negative inputs target only color, 
+              but style and color are entangled, making separation difficult.
+            </p>
+          </div>
         </div>
 
-        <div class="content has-text-justified">
-          <h3 class="title is-4">Failure Case: Extrapolation Uncertainty</h3>
-          <p>
-            While effective in certain cases, extrapolating Vibe Blending does not always produce images with a meaningful exaggeration 
-            of relevant attributes. Extrapolating beyond α > 1 does not always produce further transformation of the object in the input images.
-          </p>
-          <img src="./static/images/figures/extrapolate_fail.png" alt="Extrapolation failure" style="width: 100%; margin: 1rem 0; border-radius: 10px;">
+        <div class="box" style="margin-top: 2rem; border: 1px solid #e8e8e8; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+          <div class="content has-text-justified">
+            <h3 class="title is-4">Extrapolation Uncertainty</h3>
+            <p>
+              Extrapolating beyond α > 1 does not always produce meaningful attribute exaggeration. 
+              The transformation may not continue as expected, limiting reliable extrapolation.
+            </p>
+            <img src="./static/images/figures/extrapolate_fail.png" alt="Extrapolation failure" style="width: 100%; margin: 1rem 0; border-radius: 10px;">
+          </div>
         </div>
 
-        <div class="content has-text-justified">
-          <h3 class="title is-4">Failure Case: Correspondence Failure</h3>
-          <p>
-            Vibe Space relies on unsupervised region-level correspondence matching between DINO token clusters. This correspondence is essential 
-            for concept-level blending, as it determines which semantic regions in the input images should be merged. However, because the matching 
-            is unsupervised, it is not always reliable. When correspondence is incorrect (varies by random seeds), the resulting blends can degrade 
-            significantly, often producing incoherent or mismatched object-part combinations.
-          </p>
+        <div class="box" style="margin-top: 2rem; border: 1px solid #e8e8e8; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+          <div class="content has-text-justified">
+            <h3 class="title is-4">Correspondence Failure</h3>
+            <p style="margin-bottom: 1rem;">
+              Vibe Space relies on unsupervised region-level correspondence matching between DINO token clusters. 
+              This determines which semantic regions should be merged, but the matching is not always reliable.
+            </p>
+            <img src="./static/images/figures_appendix/fail_correspondence.png" alt="Correspondence failure" style="width: 100%; margin: 1rem 0; border-radius: 10px;">
+            <p>
+              <strong>Impact:</strong> When correspondence is incorrect (varies by random seeds), blends degrade significantly, 
+              producing incoherent or mismatched object-part combinations.
+            </p>
+          </div>
         </div>
 
-        <div class="content has-text-justified">
-          <h3 class="title is-4">Failure Case: Reconstruction Failure</h3>
-          <p>
-            Our method depends on IP-Adapter to generate images conditioned on dense CLIP features. However, IP-Adapter is not always reliable 
-            outside the training distribution of Stable Diffusion. IP-Adapter can consistently reconstruct in-distribution images (e.g., human faces) 
-            across random seeds, but fails on out-of-distribution (OOD) inputs, producing unstable and inconsistent reconstructions.
-          </p>
+        <div class="box" style="margin-top: 2rem; border: 1px solid #e8e8e8; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+          <div class="content has-text-justified">
+            <h3 class="title is-4">Reconstruction Failure</h3>
+            <p style="margin-bottom: 1rem;">
+              Our method depends on IP-Adapter (Stable Diffusion) to generate images from dense CLIP features. However, IP-Adapter reliability varies:
+            </p>
+            <ul style="margin-left: 2rem; list-style-type: disc;">
+              <li><strong>In-distribution:</strong> Consistently reconstructs (e.g., human faces) across random seeds</li>
+              <li><strong>Out-of-distribution:</strong> Produces unstable and inconsistent reconstructions</li>
+            </ul>
+          </div>
         </div>
       </div>
     </div>
