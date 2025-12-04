@@ -29,6 +29,70 @@ $(document).ready(function() {
 
     });
 
+    // TOC Navigation: Smooth scrolling and active section highlighting
+    $('.toc-link').on('click', function(e) {
+      e.preventDefault();
+      var targetId = $(this).attr('href');
+      
+      // If href is "#" or empty, scroll to top
+      if (targetId === '#' || targetId === '') {
+        $('html, body').animate({
+          scrollTop: 0
+        }, 600);
+        return;
+      }
+      
+      var targetElement = $(targetId);
+      
+      if (targetElement.length) {
+        var offset = $('.toc-navbar').outerHeight() + 20;
+        $('html, body').animate({
+          scrollTop: targetElement.offset().top - offset
+        }, 600);
+      }
+    });
+
+    // Update active TOC link based on scroll position
+    function updateActiveTOCLink() {
+      var scrollPos = $(window).scrollTop();
+      var navbarHeight = $('.toc-navbar').outerHeight();
+      var currentSection = '';
+      
+      // If at the very top, highlight Overview link
+      if (scrollPos < navbarHeight + 50) {
+        $('.toc-link').removeClass('active');
+        $('.toc-link[href="#"]').addClass('active');
+        return;
+      }
+      
+      scrollPos += navbarHeight + 100;
+      
+      // Check all elements with IDs that are in TOC
+      $('section[id], div[id]').each(function() {
+        var elementTop = $(this).offset().top;
+        var elementId = $(this).attr('id');
+        
+        // Only check if this ID is in our TOC links
+        if ($('.toc-link[href="#' + elementId + '"]').length > 0) {
+          if (scrollPos >= elementTop) {
+            currentSection = elementId;
+          }
+        }
+      });
+      
+      // Update active class
+      $('.toc-link').removeClass('active');
+      if (currentSection) {
+        $('.toc-link[href="#' + currentSection + '"]').addClass('active');
+      }
+    }
+
+    // Update on scroll
+    $(window).on('scroll', updateActiveTOCLink);
+    
+    // Update on page load
+    updateActiveTOCLink();
+
     var videoOptions = {
 			slidesToScroll: 1,
 			slidesToShow: 4,

@@ -29,6 +29,22 @@
 </head>
 <body>
 
+<!-- Table of Contents Navigation - Always on top -->
+<nav id="toc-nav" class="toc-navbar" style="position: fixed; top: 0; left: 0; right: 0; width: 100%; z-index: 99999; background: #ffffff; padding: 0.75rem 0; border-bottom: 1px solid rgba(0, 0, 0, 0.1);">
+  <div class="toc-container" style="max-width: 1200px; margin: 0 auto; padding: 0 1rem; display: flex; justify-content: center; align-items: center;">
+    <ul class="toc-menu" style="list-style: none; margin: 0; padding: 0; display: flex; flex-direction: row; justify-content: center; align-items: center; flex-wrap: wrap; gap: 1rem;">
+      <li style="display: inline-block; margin: 0; padding: 0;"><a href="#" class="toc-link"><i class="fas fa-home" style="margin-right: 0.5rem;"></i>Overview</a></li>
+      <li style="display: inline-block; margin: 0; padding: 0;"><a href="#blending-results" class="toc-link"><i class="fas fa-images" style="margin-right: 0.5rem;"></i>Vibe Blending</a></li>
+      <li style="display: inline-block; margin: 0; padding: 0;"><a href="#baseline-comparison" class="toc-link"><i class="fas fa-balance-scale" style="margin-right: 0.5rem;"></i>Baseline Comparison</a></li>
+      <li style="display: inline-block; margin: 0; padding: 0;"><a href="#method" class="toc-link"><i class="fas fa-cogs" style="margin-right: 0.5rem;"></i>Method</a></li>
+      <li style="display: inline-block; margin: 0; padding: 0;"><a href="#capabilities" class="toc-link"><i class="fas fa-star" style="margin-right: 0.5rem;"></i>Capabilities</a></li>
+      <li style="display: inline-block; margin: 0; padding: 0;"><a href="#evaluation" class="toc-link"><i class="fas fa-clipboard-check" style="margin-right: 0.5rem;"></i>Evaluation</a></li>
+      <li style="display: inline-block; margin: 0; padding: 0;"><a href="#failure-cases" class="toc-link"><i class="fas fa-exclamation-triangle" style="margin-right: 0.5rem;"></i>Failure Cases</a></li>
+      <li style="display: inline-block; margin: 0; padding: 0;"><a href="#BibTeX" class="toc-link"><i class="fas fa-book" style="margin-right: 0.5rem;"></i>BibTeX</a></li>
+    </ul>
+  </div>
+</nav>
+
 <nav class="navbar" role="navigation" aria-label="main navigation">
   <div class="navbar-brand">
     <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false">
@@ -128,7 +144,7 @@
   </div>
 </section>
 
-<section class="hero teaser">
+<section id="teaser" class="hero teaser">
   <div class="container is-max-desktop">
     <div class="hero-body">
       <img src="./static/images/figures/teaser.png" alt="Teaser figure" style="width: 100%; border-radius: 10px;">
@@ -146,15 +162,20 @@
             <li><strong>Musicians</strong> would attend to the instrument and how it is played</li>
           </ul>
           <p>
-            The intuitive process of identifying and fusing meaningful attributes—the <strong>"vibe"</strong>—reveals creative connections between distinct concepts.
+            The intuitive process of identifying and fusing meaningful attributes—the <strong>"vibe"</strong><sup><a href="#fn1" id="ref1">1</a></sup>—reveals creative connections between distinct concepts.
           </p>
+          <div class="footnotes" style="margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid #e8e8e8;">
+            <p id="fn1" style="font-size: 0.9em; line-height: 1.6;">
+              <sup>1</sup> The term "vibe," short for "vibration," originated in 1960s jazz slang to describe the mood or feeling conveyed by music, a person, or space. <a href="#ref1">↩</a>
+            </p>
+          </div>
         </div>
       </div>
     </div>
   </div>
 </section>
 
-<section class="hero is-light is-small">
+<section id="blending-results" class="hero is-light is-small">
   <div class="hero-body">
     <div class="container">
       <h2 class="title is-3 has-text-centered" style="margin-bottom: 2rem;">Vibe Blending Results</h2>
@@ -211,7 +232,7 @@
   </div>
 </section>
 
-<section class="section">
+<section id="baseline-comparison" class="section">
   <div class="container is-max-desktop">
     <!-- Vibe Blending Results -->
     <div class="columns is-centered">
@@ -306,7 +327,7 @@
   </div>
 </section>
 
-<section class="section">
+<section id="method" class="section">
   <div class="container is-max-desktop">
     <!-- 2. Methods for Vibe Space -->
     <div class="columns is-centered">
@@ -365,7 +386,7 @@
   </div>
 </section>
 
-<section class="section">
+<section id="capabilities" class="section">
   <div class="container is-max-desktop">
     <!-- 3. More Results -->
     <div class="columns is-centered">
@@ -452,26 +473,26 @@
   </div>
 </section>
   
-<section class="section"> 
+<section id="evaluation" class="section"> 
   <div class="container is-max-desktop">
     <!-- 4. Evaluation -->
     <div class="columns is-centered">
       <div class="column is-">
         <h2 class="title is-2">Evaluation</h2>
-        
-        <!-- <div class="content has-text-justified">
-          <h3 class="title is-4">Measuring Creativity</h3>
-          <p>
-            Measuring creativity is challenging and underdefined. We take clues from cognitive psychology to assess blend creativity 
-            through human evaluation and investigate how well LLMs can approximate human judgments via step-by-step reasoning.
+
+        <div class="content has-text-justified">
+          <h3 class="title is-4">What Makes a Blend Creative?</h3>
+          <p style="margin-bottom: 1rem;">
+            Cognitive psychology suggests that more creative individuals can connect more distant or weakly linked concepts. 
+            They move through intermediate associations, following nonlinear paths across clusters of related concepts.
           </p>
-          <p>
-            We construct evaluation datasets where each image pair contains distinct concepts that share visual attributes but are not 
-            spatially aligned. We curate 44 image pairs from the human-annotated Totally Looks Like dataset, which exhibits humorous 
-            similarities in unrelated concepts. We also create 300 image pairs of architectural designs, where shared attributes exist 
-            but coherent blends are non-obvious.
+          <img src="./static/images/apple_house.png" alt="Creativity diagram: more creative vs less creative paths" style="width: 80%; margin: 1rem auto; border-radius: 10px; display: block;">
+          <p style="margin-bottom: 1rem;">
+            Rather than jumping directly between remote ideas (e.g., <em>apple</em> → <em>house</em>), they move through intermediate 
+            associations (e.g., <em>apple</em> → <em>tree</em> → <em>wood</em> → <em>house</em>), following nonlinear paths across 
+            clusters of related concepts.
           </p>
-        </div> -->
+        </div>
 
         <div class="content has-text-justified">
           <h3 class="title is-4">How do humans rate the creativity of a blend?</h3>
@@ -512,7 +533,7 @@
     <!--/ Evaluation. -->
 
     <!-- 5. Failure Cases -->
-    <div class="columns is-centered">
+    <div class="columns is-centered" id="failure-cases">
       <div class="column is-full-width">
         <h2 class="title is-2">Failure Cases</h2>
         
