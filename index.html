@@ -26,6 +26,10 @@
   <script src="./static/js/bulma-carousel.min.js"></script>
   <script src="./static/js/bulma-slider.min.js"></script>
   <script src="./static/js/index.js"></script>
+
+  <!-- MathJax for LaTeX rendering -->
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
 </head>
 <body>
 
@@ -40,7 +44,6 @@
       <li style="display: inline-block; margin: 0; padding: 0;"><a href="#capabilities" class="toc-link"><i class="fas fa-star" style="margin-right: 0.5rem;"></i>Capabilities</a></li>
       <li style="display: inline-block; margin: 0; padding: 0;"><a href="#evaluation" class="toc-link"><i class="fas fa-clipboard-check" style="margin-right: 0.5rem;"></i>Evaluation</a></li>
       <li style="display: inline-block; margin: 0; padding: 0;"><a href="#failure-cases" class="toc-link"><i class="fas fa-exclamation-triangle" style="margin-right: 0.5rem;"></i>Failure Cases</a></li>
-      <li style="display: inline-block; margin: 0; padding: 0;"><a href="#BibTeX" class="toc-link"><i class="fas fa-book" style="margin-right: 0.5rem;"></i>BibTeX</a></li>
     </ul>
   </div>
 </nav>
@@ -333,52 +336,151 @@
     <div class="columns is-centered">
       <div class="column is-full-width">
         <h2 class="title is-2">Vibe Space Method</h2>
-        
+
         <div class="content has-text-justified">
-          <p style="margin-bottom: 1rem;">
-            The path of creatively blending the "vibe" is rarely linear. When two concepts lie far apart in latent space, 
-            naive linear interpolation produces incoherent images that lack semantic integrity. We propose <strong>Vibe Space</strong> 
-            to discover and traverse non-linear paths connecting distant visual concepts in pretrained feature spaces like CLIP.
-          </p>
-          
-          <video controls autoplay loop muted style="width: 100%; margin: 1rem 0; border-radius: 10px;">
-            <source src="./static/videos/methods1.mp4" type="video/mp4">
-            Your browser does not support the video tag.
-          </video>
-          
-          <p style="margin-top: 1.5rem; margin-bottom: 0.5rem;">
-            <strong>Key Insight:</strong> Instead of navigating the full ambient feature space, we learn a compact, 
-            low-dimensional manifold—a "small world"—from a few context images that captures the relevant geometry.
-          </p>
-          
-          <p style="margin-bottom: 0.5rem;"><strong>Forward Mapping:</strong></p>
-          <ul style="margin-left: 2rem; margin-bottom: 1rem; list-style-type: disc;">
-            <li><strong>(a.)</strong> Compute the affinity graph <strong>W</strong> of points on the manifold</li>
-            <li><strong>(b.)</strong> Compute generalized eigenvectors <strong>Ψ(x)</strong> of the graph Laplacian <strong>L</strong> as manifold coordinates</li>
-          </ul>
-          
-          <p style="margin-bottom: 0.5rem;"><strong>Inverse Mapping:</strong></p>
-          <ul style="margin-left: 2rem; margin-bottom: 1.5rem; list-style-type: disc;">
-            <li><strong>(c.)</strong> Perform linear interpolation in the manifold space and use graph diffusion inversion 
-            to obtain the corresponding path in the original feature space</li>
-          </ul>
-          
-          <img src="./static/images/methods2.png" alt="Vibe Space Method" style="width: 100%; margin: 1rem 0; border-radius: 10px;">
-          
-          <p style="margin-top: 1.5rem; margin-bottom: 0.5rem;"><strong>Application to Real Images:</strong></p>
-          <ul style="margin-left: 2rem; margin-bottom: 1rem; list-style-type: disc;">
-            <li><strong>(d.)</strong> Extract patch tokens from DINO features as graph nodes and compute token-wise affinity <strong>W</strong></li>
-            <li><strong>(e.)</strong> The top <em>m</em> graph eigenvectors produce co-salient segments across two images for blending, 
-            and manifold coordinates for expressing "vibe" features</li>
-            <li><strong>(f.)</strong> Apply graph diffusion inversion to obtain a path in CLIP space, then "render" pixel images 
-            from CLIP features using a frozen IP-Adapter</li>
-          </ul>
-          
-          <p style="margin-bottom: 1rem;">
-            We train two lightweight MLP networks in under 30 seconds: an encoder to simulate and compress the forward mapping, 
-            and a decoder to mimic the inverse mapping. This ensures that Euclidean distances and linear paths in Vibe Space 
-            correspond to geodesic distances and semantic paths on the underlying manifold.
-          </p>
+          <!-- Subsection 1 -->
+          <div class="box" style="margin-top: 1rem; margin-bottom: 2rem; border: 1px solid #e8e8e8; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+            <div class="content has-text-justified">
+              <h3 class="title is-4">Intuition</h3>
+              <p>
+                We illustrate our method using a 2D latent space example.
+                Our approach <strong>curves around the non-linear manifold</strong>.
+              </p>
+              
+              <div class="columns is-vcentered is-centered">
+                <div class="column has-text-centered">
+                  <img src="./static/images/input_points.png" alt="Latent Space Holes" style="border-radius: 10px; max-height: 250px;">
+                  <p class="is-size-7"><strong>(1) Example Data Manifold</strong></p>
+                </div>
+                <div class="column has-text-centered">
+                  <video poster="" id="cost_map" autoplay controls muted loop playsinline style="width: 100%; border-radius: 10px; max-height: 250px;">
+                    <source src="./static/videos/cost_map_alpha_animation.mp4" type="video/mp4">
+                  </video>
+                  <p class="is-size-7"><strong>(2) Path Finding Process</strong></p>
+                </div>
+                <div class="column has-text-centered">
+                  <img src="./static/images/path_finding_illustration_alpha_0.50.png" alt="Path Finding Illustration" style="width: 100%; border-radius: 10px; max-height: 250px;">
+                  <p class="is-size-7"><strong>(3) How Gradient of Ncut Vectors Guides Path Finding</strong></p>
+                </div>
+              </div>
+
+              <p>
+                We construct a <strong>graph diffusion space</strong> that captures the manifold's intrinsic geometry. Path finding proceeds in two steps: (1) linearly interpolate Ncut vectors \(\mathbf{\Psi}_t(\mathbf{x}_\alpha) = (1-\alpha)\mathbf{\Psi}_t(\mathbf{x}_A) + \alpha\mathbf{\Psi}_t(\mathbf{x}_B)\), then (2) use <strong>inverse mapping</strong> to recover the corresponding point in the original space:
+                $$ \gamma(\alpha) = \arg\min_{\mathbf{x^*}} \big\| \mathbf{\Psi}_t(\mathbf{x^*}) - \mathbf{\Psi}_t(\mathbf{x}_\alpha) \big\|_2^2 $$
+              </p>
+              <p>
+                <strong>Ncut vectors</strong> (eigenvectors \(\mathbf{\Psi}\)) are computed before encoder training. In this 2D example, step (2) uses <strong>gradient descent</strong> (visualized in (3)) because the <strong>gradient</strong> \(\nabla_{\mathbf{x}^*}\mathbf{\Psi}_t(\mathbf{x}^*)\) is directly computable. For real images, we instead use the learned <strong>Vibe Space</strong> encoder-decoder to obtain the optimal point without gradient descent.
+              </p>
+            </div>
+          </div>
+
+          <!-- Subsection 2 -->
+          <div class="box" style="margin-top: 1rem; margin-bottom: 2rem; border: 1px solid #e8e8e8; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+            <div class="content has-text-justified">
+              <h3 class="title is-4">Overview</h3>
+              
+              <video controls autoplay loop muted style="width: 100%; margin: 1rem 0; border-radius: 10px;">
+                <source src="./static/videos/methods1.mp4" type="video/mp4">
+                Your browser does not support the video tag.
+              </video>
+              
+              <p style="margin-bottom: 0.5rem;"><strong>Forward Mapping:</strong></p>
+              <ul style="margin-left: 2rem; margin-bottom: 1rem; list-style-type: disc;">
+                <li><strong>(a.)</strong> Compute affinity graph <strong>W</strong> and graph Laplacian <strong>L</strong></li>
+                <li><strong>(b.)</strong> Compute Ncut eigenvectors <strong>Ψ(x)</strong> of <strong>L</strong> as manifold coordinates</li>
+              </ul>
+              
+              <p style="margin-bottom: 0.5rem;"><strong>Inverse Mapping:</strong></p>
+              <ul style="margin-left: 2rem; margin-bottom: 1.5rem; list-style-type: disc;">
+                <li><strong>(c.)</strong> Interpolate in manifold space and invert to recover the path in feature space</li>
+              </ul>
+              
+              <img src="./static/images/methods2.png" alt="Vibe Space Method" style="width: 100%; margin: 1rem 0; border-radius: 10px;">
+              
+              <p style="margin-top: 1.5rem; margin-bottom: 0.5rem;"><strong>Application to Real Images:</strong></p>
+              <ul style="margin-left: 2rem; margin-bottom: 1rem; list-style-type: disc;">
+                <li><strong>(d.)</strong> Extract DINO patch tokens as graph nodes, compute affinity <strong>W</strong></li>
+                <li><strong>(e.)</strong> Top <em>m</em> eigenvectors yield co-salient segments and manifold coordinates</li>
+                <li><strong>(f.)</strong> Apply inverse mapping to CLIP space, generate images via Stable Diffusion IP-Adapter</li>
+              </ul>
+            </div>
+          </div>
+
+          <!-- Subsection 3 -->
+          <div class="box" style="margin-top: 1rem; margin-bottom: 2rem; border: 1px solid #e8e8e8; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+            <div class="content has-text-justified">
+              <h3 class="title is-4">Why Flag Space Multi-Scale Loss Gives Improvement</h3>
+              <p>
+                Graph Laplacian eigenvectors capture geometry at different scales: leading eigenvectors describe global structure, while higher-order eigenvectors encode local variations. Truncating to a fixed number \(m\) of eigenvectors selects one scale, leading to paths that focus on too many or too few attributes.
+              </p>
+              <p>
+                We use a <strong>flag space</strong>, a hierarchy of nested embeddings \(\mathbf{\Psi}^{1:m_1} \subset \mathbf{\Psi}^{1:m_2} \dots \subset \mathbf{\Psi}^{1:m_M}\), to encapsulate both coarse and fine manifold structures. The multi-scale path is recovered by minimizing the average reconstruction error across scales:
+                $$ \gamma(\alpha) = \arg\min_{\mathbf{x^*}} \frac{1}{|\mathcal{M}|} \sum_{m_k \in \mathcal{M}} \big\| \mathbf{\Psi}_t^{1:m_k}(\mathbf{x^*}) - \mathbf{\Psi}_t^{1:m_k}(\mathbf{x}_\alpha) \big\|_2^2 $$
+                This enforces consistency across global and local geometry when finding paths between points.
+              </p>
+            </div>
+          </div>
+
+          <!-- Subsection 4 -->
+          <div class="box" style="margin-top: 1rem; margin-bottom: 2rem; border: 1px solid #e8e8e8; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+            <div class="content has-text-justified">
+              <h3 class="title is-4">Why Path Finding by Graph Diffusion is Better Than Other Shortest Path Methods</h3>
+              <p>
+                Unlike discrete shortest path algorithms like Dijkstra's algorithm, which operate on a fixed graph and find paths through existing nodes, our approach using graph diffusion is robust to leaks and outliers in the data manifold.
+              </p>
+              <p>
+                Dijkstra's algorithm fails when data contains noise and leaks because it relies on direct graph connectivity. A single noisy edge or outlier can create spurious shortcuts that lead the algorithm astray. In contrast, graph diffusion captures the global structure of the manifold through spectral decomposition, effectively filtering out local noise and outliers.
+              </p>
+              
+              <div style="display: flex; justify-content: center;">
+                <video controls autoplay loop muted style="width: 40%; margin: 1rem 0; border-radius: 10px;">
+                  <source src="./static/videos/djistra_vs_ncut.mp4" type="video/mp4">
+                  Your browser does not support the video tag.
+                </video>
+              </div>
+            </div>
+          </div>
+
+          <!-- Subsection 5 -->
+          <div class="box" style="margin-top: 1rem; margin-bottom: 2rem; border: 1px solid #e8e8e8; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+            <div class="content has-text-justified">
+              <h3 class="title is-4">How Vibe Space is Trained to Approximate Inverse Mapping</h3>
+              <p>
+                For real images, gradient descent on the full graph is computationally expensive. Instead, we train two lightweight MLP networks to approximate the forward and inverse mappings:
+              </p>
+              <ul style="margin-left: 2rem; margin-bottom: 1rem; list-style-type: disc;">
+                <li><strong>Encoder:</strong> Maps input features \(\mathbf{x}\) to diffusion coordinates \(\mathbf{\Psi}_t(\mathbf{x})\), simulating the forward mapping</li>
+                <li><strong>Decoder:</strong> Maps diffusion coordinates back to feature space, approximating the inverse mapping</li>
+              </ul>
+              <p>
+                Training takes under 30 seconds and ensures that Euclidean distances and linear paths in Vibe Space correspond to geodesic distances and semantic paths on the underlying manifold. This enables efficient path finding without gradient descent at inference time.
+              </p>
+            </div>
+          </div>
+
+          <!-- Subsection 6 -->
+          <div class="box" style="margin-top: 1rem; margin-bottom: 2rem; border: 1px solid #e8e8e8; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+            <div class="content has-text-justified">
+              <h3 class="title is-4">Why Computing Latent Space from Few Examples Enables Vibe Identification</h3>
+              <p>
+                We compute the latent space from <strong>only 2-4 image examples</strong> rather than the entire training dataset. This context-specific manifold captures the dominant shared attributes—the "vibe"—between the specific images being blended.
+              </p>
+              <p>
+                <strong>Our approach:</strong> By constructing the graph Laplacian from only the input images, the leading eigenvectors naturally capture the most relevant attributes for that specific pair.
+              </p>
+              <p>
+                <strong>Alternative approaches (e.g., <a href="https://openaccess.thecvf.com/content/CVPR2025/papers/Yu_Probability_Density_Geodesics_in_Image_Diffusion_Latent_Space_CVPR_2025_paper.pdf" target="_blank">Yu et al.</a>):</strong> Methods that compute the latent space from the entire training dataset create a global manifold encoding all possible relationships. This global perspective cannot identify which attributes are most relevant for blending a specific pair, as it mixes irrelevant relationships from the full dataset.
+              </p>
+              
+              <div style="display: flex; justify-content: center; margin: 1.5rem 0;">
+                <div style="text-align: center;">
+                  <img src="./static/images/local_vs_global.png" alt="Local Vibe Space vs Global Latent Space Comparison" style="width: 40%; border-radius: 10px;">
+                  <p class="is-size-7" style="margin-top: 0.5rem;"><strong>Left:</strong> Local Vibe Space (Few Examples) — focused path capturing dominant attributes<br><strong>Right:</strong> Global Latent Space (All Data) — dense manifold with multiple paths obscuring specific relationships</p>
+                </div>
+              </div>
+              
+            </div>
+          </div>
         </div>
 
       </div>
@@ -609,12 +711,12 @@
 
 <footer class="footer">
   <div class="container">
-    <div class="content has-text-centered">
+    <!-- <div class="content has-text-centered">
       <a class="icon-link"
          href="./CVPR_2026_Vibe_Space (9).pdf" target="_blank">
         <i class="fas fa-file-pdf"></i>
       </a>
-    </div>
+    </div> -->
     <div class="columns is-centered">
       <div class="column is-8">
         <div class="content">
@@ -625,8 +727,7 @@
           </p>
           <p>
             This website template is based on the <a
-              href="https://github.com/nerfies/nerfies.github.io" target="_blank">Nerfies website</a>.
-            We thank the Nerfies authors for making their website code available.
+              href="https://github.com/nerfies/nerfies.github.io" target="_blank">Nerfies website</a>, modified by chatbot coding agents.
           </p>
         </div>
       </div>
