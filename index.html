@@ -110,7 +110,7 @@
                 </a>
               </span>
               <!-- Video Link. -->
-              <span class="link-block">
+              <!-- <span class="link-block">
                 <a href="#"
                    class="external-link button is-normal is-rounded is-dark" target="_blank">
                   <span class="icon">
@@ -118,10 +118,10 @@
                   </span>
                   <span>Video</span>
                 </a>
-              </span>
+              </span> -->
               <!-- Code Link. -->
               <span class="link-block">
-                <a href="#"
+                <a href="https://github.com/huzeyann/VibeSpace"
                    class="external-link button is-normal is-rounded is-dark" target="_blank">
                   <span class="icon">
                       <i class="fab fa-github"></i>
@@ -369,7 +369,7 @@
                 $$ \gamma(\alpha) = \arg\min_{\mathbf{x^*}} \big\| \mathbf{\Psi}_t(\mathbf{x^*}) - \mathbf{\Psi}_t(\mathbf{x}_\alpha) \big\|_2^2 $$
               </p>
               <p>
-                <strong>Ncut vectors</strong> (eigenvectors \(\mathbf{\Psi}\)) are computed before encoder training. In this 2D example, step (2) uses <strong>gradient descent</strong> (visualized in (3)) because the <strong>gradient</strong> \(\nabla_{\mathbf{x}^*}\mathbf{\Psi}_t(\mathbf{x}^*)\) is directly computable. For real images, we instead use the learned <strong>Vibe Space</strong> encoder-decoder to obtain the optimal point without gradient descent.
+                <strong>Ncut vectors</strong> (eigenvectors \(\mathbf{\Psi}\)) are computed before encoder training. In this 2D example, step (2) uses <strong>gradient descent</strong> (visualized in (3)) because the <strong>gradient</strong> \(\nabla_{\mathbf{x}^*}\mathbf{\Psi}_t(\mathbf{x}^*)\) is directly computable. For real images, we instead use the learned <strong>Vibe Space</strong> encoder-decoder to obtain the optimal point.
               </p>
             </div>
           </div>
@@ -409,7 +409,7 @@
           <!-- Subsection 3 -->
           <div class="box" style="margin-top: 1rem; margin-bottom: 2rem; border: 1px solid #e8e8e8; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
             <div class="content has-text-justified">
-              <h3 class="title is-4">Why Flag Space Multi-Scale Loss Gives Improvement</h3>
+              <h3 class="title is-4">Why Flag Space Multi-Scale Loss</h3>
               <p>
                 Graph Laplacian eigenvectors capture geometry at different scales: leading eigenvectors describe global structure, while higher-order eigenvectors encode local variations. Truncating to a fixed number \(m\) of eigenvectors selects one scale, leading to paths that focus on too many or too few attributes.
               </p>
@@ -424,7 +424,7 @@
           <!-- Subsection 4 -->
           <div class="box" style="margin-top: 1rem; margin-bottom: 2rem; border: 1px solid #e8e8e8; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
             <div class="content has-text-justified">
-              <h3 class="title is-4">Why Path Finding by Graph Diffusion is Better Than Other Shortest Path Methods</h3>
+              <h3 class="title is-4">Why Path Finding by Graph Diffusion</h3>
               <p>
                 Unlike discrete shortest path algorithms like Dijkstra's algorithm, which operate on a fixed graph and find paths through existing nodes, our approach using graph diffusion is robust to leaks and outliers in the data manifold.
               </p>
@@ -703,8 +703,11 @@
 <section class="section" id="BibTeX">
   <div class="container is-max-desktop content">
     <h2 class="title">BibTeX</h2>
-    <pre><code>todo: submit to arxiv first
-</code></pre>
+    <pre><code>@article{yang2025vibespace,
+title={Vibe Spaces for Creatively Connecting and Expressing Visual Concepts},
+author={Yang, Huzheng and Xu, Katherine and Lu, Andrew and Grossberg, Michael D. and Bai, Yutong and Shi, Jianbo},
+year={2025}
+}</code></pre>
   </div>
 </section>
 
